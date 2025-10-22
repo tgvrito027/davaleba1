@@ -8,52 +8,53 @@ import androidx.core.view.WindowInsetsCompat
 
 open class Account(val accountNumber: String, val ownerName: String) {
     private var balance: Double = 0.0
-
     fun getBalance(): Double {
         return balance
     }
     fun deposit(amount: Double) {
         if (amount > 0) {
             balance += amount
-            println("ანგარიში $accountNumber: $ownerName. შეტანილია $amount. ახალი ბალანსი: $balance")
+            println("Account $accountNumber: $ownerName. Deposited $amount. New balance: $balance")
         } else {
-            println("ანგარიში $accountNumber: შეტანილი თანხა უნდა იყოს დადებითი.")
+            println("Account $accountNumber: Deposit amount must be positive.")
         }
     }
+
     open fun withdraw(amount: Double) {
         if (amount > 0 && balance >= amount) {
             balance -= amount
-            println("ანგარიში $accountNumber: $ownerName. გამოტანილია $amount. ახალი ბალანსი: $balance")
+            println("Account $accountNumber: $ownerName. Withdrawn $amount. New balance: $balance")
         } else if (amount <= 0) {
-            println("ანგარიში $accountNumber: გამოსატანი თანხა უნდა იყოს დადებითი.")
+            println("Account $accountNumber: Withdrawal amount must be positive.")
         } else {
-            println("ანგარიში $accountNumber: ოპერაცია ვერ შესრულდა. არასაკმარისი ბალანსი. ბალანსი: $balance, მოთხოვნა: $amount")
+            println("Account $accountNumber: Operation failed. Insufficient balance. Balance: $balance, Requested: $amount")
         }
     }
+
     fun printInfo() {
-        println("\n--- ანგარიშის ინფორმაცია ---")
-        println("ანგარიშის ნომერი: $accountNumber")
-        println("მფლობელი: $ownerName")
-        println("ბალანსი: $balance")
+        println("\n--- Account Information ---")
+        println("Account Number: $accountNumber")
+        println("Owner: $ownerName")
+        println("Balance: $balance")
         println("-----------------------------")
     }
 }
 class SavingsAccount(accountNumber: String, ownerName: String) : Account(accountNumber, ownerName) {
     private val WITHDRAWAL_LIMIT = 500.0
+
     override fun withdraw(amount: Double) {
         if (amount > WITHDRAWAL_LIMIT) {
-            println("ანგარიში $accountNumber: ოპერაცია ვერ შესრულდა. შემნახველ ანგარიშზე ლიმიტია $WITHDRAWAL_LIMIT ერთ ტრანზაქციაში.")
+            println("Account $accountNumber: Operation failed. Savings account withdrawal limit is $WITHDRAWAL_LIMIT per transaction.")
         } else {
             super.withdraw(amount)
         }
     }
 }
-
 class VIPAccount(accountNumber: String, ownerName: String, val transactionFee: Double = 2.0) : Account(accountNumber, ownerName) {
 
     override fun withdraw(amount: Double) {
         if (amount <= 0) {
-            println("ანგარიში $accountNumber: გამოსატანი თანხა უნდა იყოს დადებითი.")
+            println("Account $accountNumber: Withdrawal amount must be positive.")
             return
         }
         val totalAmount = amount + transactionFee
@@ -61,23 +62,21 @@ class VIPAccount(accountNumber: String, ownerName: String, val transactionFee: D
         if (currentBalance >= totalAmount) {
             super.withdraw(totalAmount)
         } else {
-            println("ანგარიში $accountNumber: ოპერაცია ვერ შესრულდა. არასაკმარისი ბალანსი საკომისიოს ჩათვლით ($transactionFee). მოთხოვნა: $amount, სულ: $totalAmount. ბალანსი: $currentBalance")
+            println("Account $accountNumber: Operation failed. Insufficient balance including transaction fee ($transactionFee). Requested: $amount, Total: $totalAmount. Balance: $currentBalance")
         }
     }
 }
-
 fun main() {
-    val acc1 = SavingsAccount("S101", "გიორგი გ.")
-    val acc2 = VIPAccount("V202", "მარიამი ა.")
+    val acc1 = SavingsAccount("S101", "Giorgi G.")
+    val acc2 = VIPAccount("V202", "Mariam A.")
 
-    println("--- test acc1 (SavingsAccount) ---")
+    println("--- Test acc1 (SavingsAccount) ---")
     acc1.deposit(1000.0)
     acc1.withdraw(300.0)
     acc1.withdraw(600.0)
     acc1.printInfo()
 
-    println("\n---  test acc2 (VIPAccount) ---")
-    // deposit(1000.0)
+    println("\n--- Test acc2 (VIPAccount) ---")
     acc2.deposit(1000.0)
     acc2.withdraw(50.0)
     acc2.withdraw(950.0)
